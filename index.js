@@ -4,12 +4,15 @@ var bluetoothHciSocket = new BluetoothHciSocket();
 
 const IBKS = Buffer.from('2744e9e043e5', 'hex')
 const eddystoneSignature = Buffer.from('0201060303aafe', 'hex')
+const foo = Buffer.from('043e2502010001', 'hex')
 
 bluetoothHciSocket.on('data', function(data) {
 	var gapAdvType = data.readUInt8(5);
 	var gapAddrType = data.readUInt8(6);
 	var gapAddr = data.slice(7, 13);
-	if (Buffer.compare(gapAddr, IBKS) === 0) {
+	if (Buffer.compare(data.slice(0,7), foo) === 0) {
+	// if (Buffer.compare(gapAddr, IBKS) === 0) {
+		let advAddrPlainText = gapAddr.toString('hex').match(/.{1,2}/g).reverse().join(':')
 		var advLength = data.readUInt8(13);
 		var eir = data.slice(14, 14 + advLength);
 		var rssi = data.readInt8(data.length - 1);
@@ -20,24 +23,30 @@ bluetoothHciSocket.on('data', function(data) {
 		console.log('\t' + gapAddr.toString('hex').match(/.{1,2}/g).reverse().join(':'));
 		*/
 
-		if(Buffer.compare(eir.slice(0,7), eddystoneSignature) === 0) {
-			console.log('Eddystone Advertising Report');
-			let data = eir.slice(7)
-			let advLength = data.readInt8(0)
-			data = data.slice(4, advLength + 1)
-			if (data[0] === 0x20) {
-				let tlmVersion = data[1]
-				let vBat = data.readInt16BE(2)
-				let temp = data.readIntBE(4) + data.readIntBE(5)/256
-				let advCount = data.readInt32BE(6)
-				let secCount = data.readInt32BE(10)/10
+	if(Buffer.compare(eir.slice(0,7), eddystoneSignature) === 0) {
+			console.info(`advAddr: ${advAddrPlainText}`)
+			let esData = eir.slice(7)
+			let advLength = esData.readUInt8(13);
+			esData = esData.slice(4, advLength + 1)
+			if (esData[0] === 0x20) {
+				try {
+					let tlmVersion = esData[1]
+					let vBat = esData.readInt16BE(2,2)
+					let temp = esData.readIntBE(4,1) + esData.readIntBE(5,1)/256
+					let advCount = esData.readInt32BE(6,4)
+					let secCount = esData.readInt32BE(10,4)/10
 
-				console.info(`vBat: ${vBat} mV`)
-				console.info(`temp: ${temp} °C`)
-				console.info('advCount: ', advCount)
-				console.info('time since power up: ', secCount/3600)
-				console.info(rssi)
+					console.info(`vBat: ${vBat} mV`)
+					console.info(`temp: ${temp} °C`)
+					console.info('advCount: ', advCount)
+					console.info('days since power up: ', secCount/3600/24)
+				} catch (e) {
+					console.error(`Error occured with advertisement ${data.toString('hex')}`)
+					console.error(e)
+				}
 			}
+			console.info('rssi: ', rssi)
+			console.info('- - - - - - - - - - - - ')
 		}
 	}
 });
