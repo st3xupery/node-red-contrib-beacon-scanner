@@ -1,0 +1,45 @@
+<!--
+node-red-contrib-beacon-scanner - Node for Node Red that reads GPS data from the beacon-scanner software
+
+Copyright (C) 2016 Damien Clark (damo.clarky@gmail.com)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('beacon-scanner',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "file.png",
+        label: function() {
+            return this.name||"beacon-scanner";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="beacon-scanner">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="beacon-scanner">
+    <p>A simple node that converts the message payloads into all beacon-scanner characters</p>
+</script>

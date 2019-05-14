@@ -4,13 +4,13 @@ var bluetoothHciSocket = new BluetoothHciSocket();
 
 const IBKS = Buffer.from('2744e9e043e5', 'hex')
 const eddystoneSignature = Buffer.from('0201060303aafe', 'hex')
-const foo = Buffer.from('043e2502010001', 'hex')
+const foo = Buffer.from('043e', 'hex') //2502010001
 
 bluetoothHciSocket.on('data', function(data) {
 	var gapAdvType = data.readUInt8(5);
 	var gapAddrType = data.readUInt8(6);
 	var gapAddr = data.slice(7, 13);
-	if (Buffer.compare(data.slice(0,7), foo) === 0) {
+	if (Buffer.compare(data.slice(0,2), foo) === 0) {
 	// if (Buffer.compare(gapAddr, IBKS) === 0) {
 		let advAddrPlainText = gapAddr.toString('hex').match(/.{1,2}/g).reverse().join(':')
 		var advLength = data.readUInt8(13);
