@@ -34,7 +34,7 @@ module.exports = function(RED) {
 	 *
 	 * @param {Object} config Configuration options as selected through the UI
 	 */
-	function gpsd(config) {
+	function BeaconScanner(config) {
 
 		// Create a RED node
 		RED.nodes.createNode(this,config) ;
@@ -82,7 +82,6 @@ module.exports = function(RED) {
 							console.info('advCount: ', advCount)
 							console.info('days since power up: ', secCount/3600/24)
 
-							node.send(msg);
 						} catch (e) {
 							console.error(`Error occured with advertisement ${data.toString('hex')}`)
 							console.error(e)
@@ -90,6 +89,9 @@ module.exports = function(RED) {
 					}
 					console.info('rssi: ', rssi)
 					console.info('- - - - - - - - - - - - ')
+					node.send({
+						payload: { advAddrPlainText, rssi }
+					});
 				}
 			}
 		});
@@ -188,6 +190,6 @@ module.exports = function(RED) {
 
 	// Register the node by name. This must be called before overriding any of the
 	// Node functions.
-	RED.nodes.registerType("beacon-scanner",BeaconScanner) ;
+	RED.nodes.registerType("beacon-scanner", BeaconScanner) ;
 
 } ;

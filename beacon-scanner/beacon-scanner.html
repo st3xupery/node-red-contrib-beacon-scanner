@@ -19,14 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript">
     RED.nodes.registerType('beacon-scanner',{
-        category: 'function',
-        color: '#a6bbcf',
+        category: 'input',
+        color: '#c0deed',
         defaults: {
             name: {value:""}
         },
         inputs:1,
         outputs:1,
-        icon: "file.png",
+        icon: "feed.png",
         label: function() {
             return this.name||"beacon-scanner";
         }
@@ -41,5 +41,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </script>
 
 <script type="text/x-red" data-help-name="beacon-scanner">
-    <p>A simple node that converts the message payloads into all beacon-scanner characters</p>
+    <p>A simple node that listens for BLE Beacon Advertisements</p>
 </script>
